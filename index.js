@@ -25,15 +25,22 @@ app.get('/api/hello', function (req, res) {
 });
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT || 3000, function () {
+var listener = app.listen(process.env.PORT || 3000,'0.0.0.0', function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
 
+
+// Enable Express to trust proxy headers
+app.set('trust proxy', true);
+
+
+
 // Define a route for /api/whoami
 app.get('/api/whoami', (req, res) => {
+ 
   // Get the user's IP address from the request object
-  const ipaddress = req.ip;
-
+  const ipaddress =req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(ipaddress)
   // Get the user's preferred language from the "Accept-Language" header
   const language = req.get('Accept-Language');
 
